@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+            <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+			<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+			<script>
+			$(function() {
+			  // if user is running mozilla then use it's built-in WebSocket
+			  window.WebSocket = window.WebSocket || window.MozWebSocket;
+
+			  var connection = new WebSocket('ws://127.0.0.1:8080');
+
+			  connection.onopen = function () {
+				// connection is opened and ready to use
+				console.log("Web connection");
+				connection.send('Web'); 
+			  };
+
+			  connection.onerror = function (error) {
+				// an error occurred when sending/receiving data
+				console.log("Error");
+			  };
+
+			  connection.onmessage = function (message) {
+				// try to decode json (I assume that each message
+				// from server is json)
+				
+				if(message.data.includes("salle 1"))
+				{
+					if (message.data.includes("Etemp")==true)
+					{
+						$('#logsError').html(message.data);
+						alert("Alerte la temperature est trop élevé : " + message.data+"\nAppeler les pompier");
+					}
+					else
+					{
+						
+						if (message.data.includes("Temp")==true)
+						{
+							$('#logsTemp').html(message.data);
+						}
+						if (message.data.includes("Light")==true)
+						{
+							$('#logsLight').html(message.data);
+						}
+					}
+					$('#logs').html(message.data);
+					// handle incoming message
+				}
+				if(message.data.includes("salle 2"))
+				{
+					if (message.data.includes("Etemp")==true)
+						{
+							$('#logsError2').html(message.data);
+							alert("Alerte la temperature est trop élevé : " + message.data+"\nAppeler les pompier");
+						}
+						else
+						{
+							
+							if (message.data.includes("Temp")==true)
+							{
+								$('#logsTemp2').html(message.data);
+							}
+							if (message.data.includes("Light")==true)
+							{
+								$('#logsLight2').html(message.data);
+							}
+						}
+				}
+			  };
+			  
+			  $('#btn_on').click(function () {
+                                connection.send('1');
+                            });
+                
+                            $('#btn_off').click(function () {
+                                connection.send('0');
+                            });
+							$('#thermo').click(function () {
+                                connection.send('2');
+                            });
+							$('#lumiere').click(function () {
+                                connection.send('3');
+                            });
+			});
+			
+			$('#btn_on2').click(function () {
+                                connection.send('MQTT - 1');
+                            });
+                
+                            $('#btn_off2').click(function () {
+                                connection.send('MQTT - 0');
+                            });
+							$('#thermo2').click(function () {
+                                connection.send('MQTT - 2');
+                            });
+							$('#lumiere2').click(function () {
+                                connection.send('MQTT - 3');
+                            });
+			});
+	</script>
+
+</head>
+<body>
+            <h1>Communication avec Arduino Salle 1!</h1>
+            <table width="100%" border="0">
+                      <tr>
+                <td><span id="btn_off" class="glyphicon glyphicon-off btn_red"></span></td>
+                <td><span id="btn_on" class="glyphicon glyphicon-off btn_green"></span></td>
+				<td><span id="thermo" class="thermo"><button type="button">get temp!</button></span></td>
+				<td><span id="lumiere" class="thermo"><button type="button">get light!</button></span></td>
+              </tr>
+                    </table>
+            <p><span id="logsTemp"></span></p>
+			<p><span id="logsLight"></span></p>
+			<p><span id="logsError"></span></p>
+			<br/>
+			<br/>
+			<br/>
+			<br/>
+			<br/>
+			<br/>
+			<h1>Communication avec Arduino Salle 2 !</h1>
+            <table width="100%" border="0">
+                      <tr>
+                <td><span id="btn_off2" class="glyphicon glyphicon-off btn_red"></span></td>
+                <td><span id="btn_on2" class="glyphicon glyphicon-off btn_green"></span></td>
+				<td><span id="thermo2" class="thermo"><button type="button">get temp!</button></span></td>
+				<td><span id="lumiere2" class="thermo"><button type="button">get light!</button></span></td>
+              </tr>
+                    </table>
+            <p><span id="logsTemp2"></span></p>
+			<p><span id="logsLight2"></span></p>
+			<p><span id="logsError2"></span></p>
+        </body>
+</html>
